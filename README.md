@@ -2,6 +2,12 @@
 
 PPE Inventory + Clients + Audit Log
 
+## Recent Updates
+
+- **Security Updates (April 2026)**:
+  - Updated PostgreSQL JDBC driver from 42.6.0 to 42.7.2 to fix CVE-2024-1597 (SQL injection vulnerability in simple query mode).
+  - Updated H2 database from 2.1.214 to 2.3.232 to fix CVE-2022-45868 (password exposure in web admin console).
+
 🛡️ GDPR-Aligned Data Governance
 Immutable Audit Trails: Integrated Hibernate Envers to maintain a permanent, versioned history of all client vitals and sensitive records.
 
@@ -10,7 +16,7 @@ Mandatory Justification Logic: Implemented Reason Codes for every data modificat
 Data Minimization: Engineered the backend to use UUIDs for internal logging, ensuring that logs remain useful for debugging without exposing PII (Personally Identifiable Information) in the event of a breach.
 
 🏗️ Full-Stack Architecture
-Backend: Built with Java 21 and Spring Boot 3, utilizing Spring Data JPA for robust database management and H2 for a zero-configuration, lightning-fast development environment.
+Backend: Built with Java 17 and Spring Boot 3, utilizing Spring Data JPA for robust database management and H2 for a zero-configuration, lightning-fast development environment.
 
 Frontend: Developed a reactive UI using React + Vite, focusing on high-contrast accessibility and low-latency updates—critical for fast-paced caregiving environments.
 
