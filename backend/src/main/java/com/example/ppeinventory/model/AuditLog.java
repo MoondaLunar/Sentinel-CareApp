@@ -16,6 +16,7 @@ public class AuditLog {
     @Column(length=2000)
     private String details;
     private String reasonCode;
+    private String version;
 
     public AuditLog() {}
     public AuditLog(String username, String action, String entityName, Long entityId, String details) {
@@ -23,6 +24,9 @@ public class AuditLog {
     }
     public AuditLog(String username, String action, String entityName, Long entityId, String details, String reasonCode) {
         this.username = username; this.action = action; this.entityName = entityName; this.entityId = entityId; this.details = details; this.reasonCode = reasonCode;
+    }
+    public AuditLog(String username, String action, String entityName, Long entityId, String details, String reasonCode, String version) {
+        this.username = username; this.action = action; this.entityName = entityName; this.entityId = entityId; this.details = details; this.reasonCode = reasonCode; this.version = version;
     }
 
     public Long getId() { return id; }
@@ -33,4 +37,5 @@ public class AuditLog {
     public LocalDateTime getTimestamp() { return timestamp; }
     public String getDetails() { return details; }
     public String getReasonCode() { return reasonCode; }
+    public String getVersion() { return version; }
 }

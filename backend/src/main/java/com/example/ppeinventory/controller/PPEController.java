@@ -9,14 +9,15 @@ import com.example.ppeinventory.model.PPEItem;
 import com.example.ppeinventory.model.AuditLog;
 import com.example.ppeinventory.repository.PPEItemRepository;
 import com.example.ppeinventory.repository.AuditLogRepository;
+import com.example.ppeinventory.service.AuditService;
 
 @RestController
 @RequestMapping("/api/ppe")
 public class PPEController {
     private final PPEItemRepository repo;
-    private final AuditLogRepository auditRepo;
+    private final AuditService auditService;
 
-    public PPEController(PPEItemRepository repo, AuditLogRepository auditRepo) { this.repo = repo; this.auditRepo = auditRepo; }
+    public PPEController(PPEItemRepository repo, AuditService auditService) { this.repo = repo; this.auditService = auditService; }
 
     @GetMapping
     public List<PPEItem> list() { return repo.findAll(); }
@@ -24,7 +25,7 @@ public class PPEController {
     @PostMapping
     public PPEItem create(@RequestBody PPEItem item, Authentication auth) {
         PPEItem saved = repo.save(item);
-        auditRepo.save(new AuditLog(auth==null?"anonymous":auth.getName(), "CREATE", "PPEItem", saved.getId(), "created: name="+saved.getName()));
+        auditService.log(auth==null?"anonymous":auth.getName(), "CREATE", "PPEItem", saved.getId(), "created: name="+saved.getName());
         return saved;
     }
 
@@ -37,7 +38,7 @@ public class PPEController {
             existing.setLocation(updated.getLocation());
             PPEItem saved = repo.save(existing);
             String after = String.format("name=%s,qty=%d,loc=%s", saved.getName(), saved.getQuantity(), saved.getLocation());
-            auditRepo.save(new AuditLog(auth==null?"anonymous":auth.getName(), "UPDATE", "PPEItem", saved.getId(), "before: "+before+"; after: "+after));
+            auditService.log(auth==null?"anonymous":auth.getName(), "UPDATE", "PPEItem", saved.getId(), "before: "+before+"; after: "+after);
             return ResponseEntity.ok(saved);
         }).orElse(ResponseEntity.notFound().build());
     }
@@ -47,7 +48,7 @@ public class PPEController {
         return repo.findById(id).map(existing -> {
             String snapshot = String.format("name=%s,qty=%d,loc=%s", existing.getName(), existing.getQuantity(), existing.getLocation());
             repo.delete(existing);
-            auditRepo.save(new AuditLog(auth==null?"anonymous":auth.getName(), "DELETE", "PPEItem", id, "deleted: "+snapshot));
+            auditService.log(auth==null?"anonymous":auth.getName(), "DELETE", "PPEItem", id, "deleted: "+snapshot);
             return ResponseEntity.ok().build();
         }).orElse(ResponseEntity.notFound().build());
     }

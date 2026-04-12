@@ -11,16 +11,17 @@ import com.example.ppeinventory.model.AuditLog;
 import com.example.ppeinventory.repository.ClientRepository;
 import com.example.ppeinventory.repository.VitalRepository;
 import com.example.ppeinventory.repository.AuditLogRepository;
+import com.example.ppeinventory.service.AuditService;
 
 @RestController
 @RequestMapping("/api/clients")
 public class ClientController {
     private final ClientRepository clientRepo;
     private final VitalRepository vitalRepo;
-    private final AuditLogRepository auditRepo;
+    private final AuditService auditService;
 
-    public ClientController(ClientRepository clientRepo, VitalRepository vitalRepo, AuditLogRepository auditRepo) {
-        this.clientRepo = clientRepo; this.vitalRepo = vitalRepo; this.auditRepo = auditRepo;
+    public ClientController(ClientRepository clientRepo, VitalRepository vitalRepo, AuditService auditService) {
+        this.clientRepo = clientRepo; this.vitalRepo = vitalRepo; this.auditService = auditService;
     }
 
     @GetMapping
@@ -34,7 +35,7 @@ public class ClientController {
     @PostMapping
     public Client create(@RequestBody Client client, Authentication auth) {
         Client saved = clientRepo.save(client);
-        auditRepo.save(new AuditLog(auth==null?"anonymous":auth.getName(), "CREATE", "Client", saved.getId(), "created: name="+saved.getName()));
+        auditService.log(auth==null?"anonymous":auth.getName(), "CREATE", "Client", saved.getId(), "created: name="+saved.getName());
         return saved;
     }
 
@@ -45,7 +46,7 @@ public class ClientController {
             existing.setName(updated.getName()); existing.setDateOfBirth(updated.getDateOfBirth());
             Client saved = clientRepo.save(existing);
             String after = String.format("name=%s,dob=%s", saved.getName(), saved.getDateOfBirth());
-            auditRepo.save(new AuditLog(auth==null?"anonymous":auth.getName(), "UPDATE", "Client", saved.getId(), "before: "+before+"; after: "+after, reason));
+            auditService.log(auth==null?"anonymous":auth.getName(), "UPDATE", "Client", saved.getId(), "before: "+before+"; after: "+after, reason);
             return ResponseEntity.ok(saved);
         }).orElse(ResponseEntity.notFound().build());
     }
@@ -54,7 +55,7 @@ public class ClientController {
     public ResponseEntity<?> delete(@PathVariable Long id, Authentication auth) {
         return clientRepo.findById(id).map(existing -> {
             clientRepo.delete(existing);
-            auditRepo.save(new AuditLog(auth==null?"anonymous":auth.getName(), "DELETE", "Client", id, "deleted"));
+            auditService.log(auth==null?"anonymous":auth.getName(), "DELETE", "Client", id, "deleted");
             return ResponseEntity.ok().build();
         }).orElse(ResponseEntity.notFound().build());
     }
@@ -68,7 +69,7 @@ public class ClientController {
         v.setClient(c);
         Vital saved = vitalRepo.save(v);
         String details = String.format("client=%d,hr=%s,bp=%s", id, saved.getHeartRate(), saved.getBloodPressure());
-        auditRepo.save(new AuditLog(auth==null?"anonymous":auth.getName(), "CREATE", "Vital", saved.getId(), "vital added: "+details));
+        auditService.log(auth==null?"anonymous":auth.getName(), "CREATE", "Vital", saved.getId(), "vital added: "+details);
         return saved;
     }
 }
