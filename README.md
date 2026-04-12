@@ -6,8 +6,9 @@ PPE Inventory + Clients + Audit Log
 
 - **Security Updates (April 2026)**:
   - Updated PostgreSQL JDBC driver from 42.6.0 to 42.7.2 to fix CVE-2024-1597 (SQL injection vulnerability in simple query mode).
-  - Updated H2 database from 2.1.214 to 2.3.232 to fix CVE-2022-45868 (password exposure in web admin console).
-
+  - Updated H2 database from 2.1.214 to 2.3.232 to fix CVE-2022-45868 (password exposure in web admin console).- **Audit Log Enhancements (April 2026)**:
+  - Added version/hash tracking to audit logs using git-commit-id-plugin.
+  - Each audit log entry now includes the Git commit hash of the build that performed the action, allowing users to identify exactly which version of the application made each change.
 🛡️ GDPR-Aligned Data Governance
 Immutable Audit Trails: Integrated Hibernate Envers to maintain a permanent, versioned history of all client vitals and sensitive records.
 
